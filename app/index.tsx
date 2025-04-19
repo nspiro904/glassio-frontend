@@ -148,6 +148,7 @@ export default function HomeScreen() {
           ]}
         />
 
+          {!imageUri && (
         <View style={styles.buttonRow}>
           <GlassButton
             icon={<Ionicons name="camera-outline" size={28} color="white" />}
@@ -162,6 +163,7 @@ export default function HomeScreen() {
             onPress={() => handlePick("gallery")}
           />
         </View>
+          )}
 
         {loading && (
           <ActivityIndicator
@@ -171,7 +173,7 @@ export default function HomeScreen() {
           />
         )}
         
-        {(!overlayImages[0] && !loading) && (
+        {(!overlayImages[0] && !loading && imageUri) && (
 
           <>
             <Animatable.Image
@@ -191,7 +193,7 @@ export default function HomeScreen() {
           </>
         )}
 
-        {overlayImages && (
+        {(overlayImages[0] && !loading) && (
             <>
             {faceShape && (
           <Animatable.Text animation="fadeIn" delay={200} style={styles.result}>
@@ -204,6 +206,16 @@ export default function HomeScreen() {
               source={{ uri: overlayImages[0] }}
               style={styles.image}
             />
+            <View style={{ width: '100%' }}>
+            <GlassButton
+              icon={
+                <Ionicons name="download-outline" size={24} color="white" />
+              }
+              label="Save"
+              onPress={uploadImage}
+              wide
+            />
+            </View>
             
 
             </>
