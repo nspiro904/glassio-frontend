@@ -139,7 +139,7 @@ export default function HomeScreen() {
       colors={["#0f0c29", "#302b63", "#24243e"]}
       style={{ flex: 1 }}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.container}>
         <Animated.Image
           source={require("../assets/logo.png")}
           style={[
@@ -234,7 +234,7 @@ export default function HomeScreen() {
             />
           ))}
         </View> */}
-      </ScrollView>
+      </View>
     </LinearGradient>
   );
 }
