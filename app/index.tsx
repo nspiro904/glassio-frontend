@@ -16,6 +16,7 @@ import axios from "axios";
 import { BlurView } from "expo-blur";
 import * as Animatable from "react-native-animatable";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import * as FileSystem from 'expo-file-system';
 
 export default function HomeScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -51,21 +52,6 @@ export default function HomeScreen() {
       }
     })();
   }, []);
-
-  const animatePress = () => {
-    Animated.sequence([
-      Animated.timing(scale, {
-        toValue: 0.96,
-        duration: 80,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: 80,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
 
   const handlePick = async (from: "camera" | "gallery") => {
     try {
