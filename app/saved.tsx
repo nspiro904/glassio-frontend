@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Image, StyleSheet, Text, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import Layout from '@/components/Layout';
 
 export default function ImageGallery(){
   const [savedImages, setSavedImages] = useState([]);
@@ -32,6 +33,7 @@ export default function ImageGallery(){
   }, []);
 
   return (
+    <Layout>
     <View style={styles.container}>
       {savedImages.length > 0 ? (
         <FlatList
@@ -64,7 +66,7 @@ export default function ImageGallery(){
       </Modal>
     )}
     </View>
-    
+    </Layout>
    
   );
 };

@@ -17,6 +17,7 @@ import { BlurView } from "expo-blur";
 import * as Animatable from "react-native-animatable";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as FileSystem from 'expo-file-system';
+import Layout from "@/components/Layout";
 
 export default function HomeScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -158,19 +159,10 @@ export default function HomeScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={["#0f0c29", "#302b63", "#24243e"]}
-      style={{ flex: 1 }}
-    >
+   
+      <Layout>
       <View style={styles.container}>
-        <Animated.Image
-          source={require("../assets/logo.png")}
-          style={[
-            styles.logo,
-            { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
-          ]}
-        />
-
+        
           {!imageUri && (
         <View style={styles.buttonRow}>
           <GlassButton
@@ -249,7 +241,7 @@ export default function HomeScreen() {
             </>
         )}
       </View>
-    </LinearGradient>
+      </Layout>
   );
 }
 
