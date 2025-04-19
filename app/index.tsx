@@ -188,7 +188,6 @@ export default function HomeScreen() {
               }
               label="Upload & Predict"
               onPress={uploadImage}
-              wide
             />
           </>
         )}
@@ -206,14 +205,20 @@ export default function HomeScreen() {
               source={{ uri: overlayImages[0] }}
               style={styles.image}
             />
-            <View style={{ width: '100%' }}>
+            <View style={{flexDirection: 'row', gap: '10'}}>
             <GlassButton
               icon={
                 <Ionicons name="download-outline" size={24} color="white" />
               }
               label="Save"
               onPress={uploadImage}
-              wide
+            />
+            <GlassButton
+              icon={
+                <Ionicons name="refresh" size={24} color="white" />
+              }
+              label="Try again"
+              onPress={() => {setImageUri(null); setOverlayImages([])}}
             />
             </View>
             
@@ -278,7 +283,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: 100,
+    paddingTop: 25,
     paddingBottom: 50,
     paddingHorizontal: 20,
   },
@@ -344,5 +349,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
+  },
+  resultButtonRow: {
+
   },
 });
