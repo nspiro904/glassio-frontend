@@ -106,7 +106,7 @@ export default function HomeScreen() {
 
     try {
       console.log("Predicting...");
-
+      setLoading(true);
       const faceshapeResponse = await axios.post(
         "https://glassio-api.onrender.com/predict",
         formData,
@@ -140,7 +140,7 @@ export default function HomeScreen() {
       );
 
       console.log("Overlay Successfull");
-
+      setLoading(false);
       setOverlayImages([overlayResponse.data.result_image]);
     } catch (error) {
       console.error(error);
@@ -177,7 +177,16 @@ export default function HomeScreen() {
           />
         </View>
 
-        {imageUri && (
+        {loading && (
+          <ActivityIndicator
+            size="large"
+            color="#007AFF"
+            style={{ marginTop: 20 }}
+          />
+        )}
+        
+        {(!overlayImages[0] && !loading) && (
+
           <>
             <Animatable.Image
               animation="fadeInUp"
@@ -196,20 +205,27 @@ export default function HomeScreen() {
           </>
         )}
 
-        {loading && (
-          <ActivityIndicator
-            size="large"
-            color="#007AFF"
-            style={{ marginTop: 20 }}
-          />
-        )}
-        {faceShape && (
+        {overlayImages && (
+            <>
+            {faceShape && (
           <Animatable.Text animation="fadeIn" delay={200} style={styles.result}>
             Detected Shape: {faceShape}
           </Animatable.Text>
+            )}
+            <Animatable.Image
+              animation="fadeInUp"
+              duration={700}
+              source={{ uri: overlayImages[0] }}
+              style={styles.image}
+            />
+            
+
+            </>
         )}
 
-        <View style={styles.overlayContainer}>
+        
+        
+        {/* <View style={styles.overlayContainer}>
           {overlayImages.map((img, index) => (
             <Animatable.Image
               key={index}
@@ -219,7 +235,7 @@ export default function HomeScreen() {
               style={styles.overlay}
             />
           ))}
-        </View>
+        </View> */}
       </ScrollView>
     </LinearGradient>
   );
