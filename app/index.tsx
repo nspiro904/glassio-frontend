@@ -134,6 +134,29 @@ export default function HomeScreen() {
     }
   };
 
+  const saveImageToAppDirectory = async () => {
+    try {
+      const fileName = `image_${Date.now()}.jpg`;
+      const appDir = FileSystem.documentDirectory; // Private app storage
+      const destPath = `${appDir}${fileName}`;
+  
+       // Remove the Base64 prefix (e.g., "data:image/png;base64,")
+      const cleanBase64 = overlayImages[0].split(',')[1];
+
+      // Write the Base64 data to a file
+      await FileSystem.writeAsStringAsync(destPath, cleanBase64, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+      console.log('Image saved to:', destPath);
+      Alert.alert('Success', 'Image saved successfully')
+      return destPath;
+    } catch (error) {
+      console.error('Error saving image:', error);
+      Alert.alert('Error', 'Failed to save image.');
+      return null;
+    }
+  };
+
   return (
     <LinearGradient
       colors={["#0f0c29", "#302b63", "#24243e"]}
@@ -211,7 +234,7 @@ export default function HomeScreen() {
                 <Ionicons name="download-outline" size={24} color="white" />
               }
               label="Save"
-              onPress={uploadImage}
+              onPress={saveImageToAppDirectory}
             />
             <GlassButton
               icon={
@@ -225,20 +248,6 @@ export default function HomeScreen() {
 
             </>
         )}
-
-        
-        
-        {/* <View style={styles.overlayContainer}>
-          {overlayImages.map((img, index) => (
-            <Animatable.Image
-              key={index}
-              animation="zoomIn"
-              delay={index * 100}
-              source={{ uri: img }}
-              style={styles.overlay}
-            />
-          ))}
-        </View> */}
       </View>
     </LinearGradient>
   );
