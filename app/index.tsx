@@ -16,8 +16,9 @@ import axios from "axios";
 import { BlurView } from "expo-blur";
 import * as Animatable from "react-native-animatable";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import Layout from "@/components/Layout";
+import ImageGallery from "@/components/ImageGallery";
 
 export default function HomeScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -113,22 +114,22 @@ export default function HomeScreen() {
         type: "image/jpeg",
         name: "photo.jpg",
       } as any);
-      overlayBody.append(
-        "glass_type",
-        `${faceshapeResponse.data.face_shape}/2`
-      );
+      overlayBody.append("glass_type", `${faceshapeResponse.data.face_shape}`);
 
       const overlayResponse = await axios.post(
-        "https://glassio-api.onrender.com/overlay",
+        "http://192.168.0.140:8000/overlay",
         overlayBody,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
+      console.log(overlayResponse.data.result_images);
+      console.log(overlayResponse.data.result_images.length);
+
       console.log("Overlay Successfull");
       setLoading(false);
-      setOverlayImages([overlayResponse.data.result_image]);
+      setOverlayImages(overlayResponse.data.result_images);
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "Something went wrong while uploading.");
@@ -140,45 +141,43 @@ export default function HomeScreen() {
       const fileName = `image_${Date.now()}.jpg`;
       const appDir = FileSystem.documentDirectory; // Private app storage
       const destPath = `${appDir}${fileName}`;
-  
-       // Remove the Base64 prefix (e.g., "data:image/png;base64,")
-      const cleanBase64 = overlayImages[0].split(',')[1];
+
+      // Remove the Base64 prefix (e.g., "data:image/png;base64,")
+      const cleanBase64 = overlayImages[0].split(",")[1];
 
       // Write the Base64 data to a file
       await FileSystem.writeAsStringAsync(destPath, cleanBase64, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-      console.log('Image saved to:', destPath);
-      Alert.alert('Success', 'Image saved successfully')
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      console.log("Image saved to:", destPath);
+      Alert.alert("Success", "Image saved successfully");
       return destPath;
     } catch (error) {
-      console.error('Error saving image:', error);
-      Alert.alert('Error', 'Failed to save image.');
+      console.error("Error saving image:", error);
+      Alert.alert("Error", "Failed to save image.");
       return null;
     }
   };
 
   return (
-   
-      <Layout>
+    <Layout>
       <View style={styles.container}>
-        
-          {!imageUri && (
-        <View style={styles.buttonRow}>
-          <GlassButton
-            icon={<Ionicons name="camera-outline" size={28} color="white" />}
-            label="Take Photo"
-            onPress={() => handlePick("camera")}
-          />
-          <GlassButton
-            icon={
-              <MaterialIcons name="photo-library" size={28} color="white" />
-            }
-            label="Pick from Gallery"
-            onPress={() => handlePick("gallery")}
-          />
-        </View>
-          )}
+        {!imageUri && (
+          <View style={styles.buttonRow}>
+            <GlassButton
+              icon={<Ionicons name="camera-outline" size={28} color="white" />}
+              label="Take Photo"
+              onPress={() => handlePick("camera")}
+            />
+            <GlassButton
+              icon={
+                <MaterialIcons name="photo-library" size={28} color="white" />
+              }
+              label="Pick from Gallery"
+              onPress={() => handlePick("gallery")}
+            />
+          </View>
+        )}
 
         {loading && (
           <ActivityIndicator
@@ -187,9 +186,8 @@ export default function HomeScreen() {
             style={{ marginTop: 20 }}
           />
         )}
-        
-        {(!overlayImages[0] && !loading && imageUri) && (
 
+        {!overlayImages[0] && !loading && imageUri && (
           <>
             <Animatable.Image
               animation="fadeInUp"
@@ -207,41 +205,45 @@ export default function HomeScreen() {
           </>
         )}
 
-        {(overlayImages[0] && !loading) && (
-            <>
+        {overlayImages[0] && !loading && (
+          <>
             {faceShape && (
-          <Animatable.Text animation="fadeIn" delay={200} style={styles.result}>
-            Detected Shape: {faceShape}
-          </Animatable.Text>
+              <Animatable.Text
+                animation="fadeIn"
+                delay={200}
+                style={styles.result}
+              >
+                Detected Shape: {faceShape}
+              </Animatable.Text>
             )}
-            <Animatable.Image
+            {/* <Animatable.Image
               animation="fadeInUp"
               duration={700}
               source={{ uri: overlayImages[0] }}
               style={styles.image}
-            />
-            <View style={{flexDirection: 'row', gap: '10'}}>
-            <GlassButton
-              icon={
-                <Ionicons name="download-outline" size={24} color="white" />
-              }
-              label="Save"
-              onPress={saveImageToAppDirectory}
-            />
-            <GlassButton
-              icon={
-                <Ionicons name="refresh" size={24} color="white" />
-              }
-              label="Try again"
-              onPress={() => {setImageUri(null); setOverlayImages([])}}
-            />
+            /> */}
+            <ImageGallery overlayImages={overlayImages} />
+            <View style={{ flexDirection: "row", gap: "10" }}>
+              <GlassButton
+                icon={
+                  <Ionicons name="download-outline" size={24} color="white" />
+                }
+                label="Save"
+                onPress={saveImageToAppDirectory}
+              />
+              <GlassButton
+                icon={<Ionicons name="refresh" size={24} color="white" />}
+                label="Try again"
+                onPress={() => {
+                  setImageUri(null);
+                  setOverlayImages([]);
+                }}
+              />
             </View>
-            
-
-            </>
+          </>
         )}
       </View>
-      </Layout>
+    </Layout>
   );
 }
 
@@ -351,7 +353,5 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 10,
   },
-  resultButtonRow: {
-
-  },
+  resultButtonRow: {},
 });
