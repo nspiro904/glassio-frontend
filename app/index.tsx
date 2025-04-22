@@ -117,7 +117,7 @@ export default function HomeScreen() {
       overlayBody.append("glass_type", `${faceshapeResponse.data.face_shape}`);
 
       const overlayResponse = await axios.post(
-        "http://192.168.0.140:8000/overlay",
+        "https://glassio-api.onrender.com/overlay",
         overlayBody,
         {
           headers: { "Content-Type": "multipart/form-data" },
