@@ -4,13 +4,23 @@ import * as Animatable from "react-native-animatable";
 
 const { width } = Dimensions.get("window");
 
-const ImageGallery = ({ overlayImages }) => {
+const ImageGallery = ({ overlayImages, onIndexChange }) => {
+
+  const handleScroll = (event) => {
+    const contentOffset = event.nativeEvent.contentOffset.x;
+    const currentIndex = Math.round(contentOffset / width);
+    onIndexChange?.(currentIndex);
+  };
+
   return (
     <FlatList
       data={overlayImages}
       horizontal
       pagingEnabled
       showsHorizontalScrollIndicator={false}
+      snapToInterval={width}  
+      snapToAlignment="center"
+      decelerationRate="fast"  
       keyExtractor={(item, index) => index.toString()}
       renderItem={({ item }) => (
         <Animatable.Image
@@ -20,6 +30,8 @@ const ImageGallery = ({ overlayImages }) => {
           style={styles.image}
         />
       )}
+      onScroll={handleScroll}  // Add this
+      scrollEventThrottle={16}  // Add for smoother updates
     />
   );
 };

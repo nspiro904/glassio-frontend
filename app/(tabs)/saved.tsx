@@ -3,6 +3,7 @@ import { View, FlatList, Image, StyleSheet, Text, Modal, TouchableOpacity, Dimen
 import * as FileSystem from 'expo-file-system';
 import Layout from '@/components/Layout';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 
 export default function ImageGallery(){
   const [savedImages, setSavedImages] = useState([]);
@@ -27,6 +28,22 @@ export default function ImageGallery(){
       return [];
     }
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true;
+      
+      const refreshImages = async () => {
+        const images = await loadSavedImages();
+        if (isActive) setSavedImages(images);
+      };
+
+      refreshImages();
+      
+      return () => {
+        isActive = false; // Cleanup to prevent state updates if component unmounts
+      };
+    }, [])
+  );
 
   const deleteImage = async (image) => {
     try {
